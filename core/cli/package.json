@@ -18,6 +18,9 @@
         "lib": "lib",
         "test": "__tests__"
     },
+    "publishConfig": {
+        "access": "public"
+    },
     "files": [
         "lib"
     ],
@@ -33,6 +36,7 @@
     },
     "dependencies": {
         "@lin-hub/log": "file:../../utils/log",
+        "@lin-hub/get-npm-info": "file:../../utils/get-npm-info",
         "colors": "^1.4.0",
         "dotenv": "^8.2.0",
         "import-local": "^3.0.2",

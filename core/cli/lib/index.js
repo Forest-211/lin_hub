@@ -11,6 +11,7 @@ const dotenv = require('dotenv')
 const log = require('@lin-hub/log')
 const pkg = require('../package.json')
 const constant = require('./constant')
+const { getNpmInfo } = require('@lin-hub/get-npm-info')
 
 let args, config
 function core() {
@@ -21,6 +22,7 @@ function core() {
         checkUserHome()
         checkInputArgs()
         checkEnv()
+        checkGlobalUpdate()
     } catch (err) {
         log.error(err.message)
     }
@@ -86,4 +88,16 @@ function createDefaultConfig(){
     process.env.CLI_HOME_PATH = cliConfig.cliHome
 }
 
+function checkGlobalUpdate(){
+    /**
+     * Tasking：
+     * - 获取当前版本号和模块名
+     * - 调用npm API 获取所有得版本号
+     * - 提取所有爸妈本号，比对那些版本号是大于当前版本号
+     * - 获取最新版本号，提示用户更新该版本
+     */
+    const currentVersion = pkg.version
+    const npmName = pkg.name
+     getNpmInfo(npmName)
+}
 module.exports = core
