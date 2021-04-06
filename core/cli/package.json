@@ -1,0 +1,39 @@
+{
+    "name": "lin-hub",
+    "version": "0.0.0",
+    "description": "脚手架",
+    "keywords": [
+        "lin-hub",
+        "cli",
+        "脚手架"
+    ],
+    "author": "changlin93 <767425412@qq.com>",
+    "homepage": "https://github.com/Forest-architecture/lin_hub#readme",
+    "license": "ISC",
+    "main": "lib/index.js",
+    "bin": {
+        "lin": "bin/index.js"
+    },
+    "directories": {
+        "lib": "lib",
+        "test": "__tests__"
+    },
+    "files": [
+        "lib"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Forest-architecture/lin_hub.git"
+    },
+    "scripts": {
+        "test": "echo \"Error: run tests from root\" && exit 1"
+    },
+    "bugs": {
+        "url": "https://github.com/Forest-architecture/lin_hub/issues"
+    },
+    "dependencies": {
+        "import-local": "^3.0.2",
+        "npmlog": "^4.1.2",
+        "@lin-hub/log": "file:../../utils/log"
+    }
+}
