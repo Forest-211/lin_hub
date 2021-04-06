@@ -3,7 +3,9 @@ const os = require('os')
 const semver = require('semver')
 const rootCheck = require('root-check')
 const colors = require('colors/safe')
-const { info, error, notice } = require('@lin-hub/log')
+const userHome = require('user-home')
+const pathExists = require('path-exists').sync
+const { error, notice } = require('@lin-hub/log')
 const pkg = require('../package.json')
 const constant = require('./constant')
 
@@ -12,6 +14,7 @@ function core() {
         checkPkgVersion()
         checkNodeVersion()
         checkRoot()
+        checkUserHome()
     } catch (err) {
         error(err.message)
     }
@@ -44,6 +47,12 @@ function checkRoot(){
     platform.push(os.platform())
     if(!platform.includes('win32')){
         rootCheck()
+    }
+}
+
+function checkUserHome(){
+    if(!userHome || !pathExists(userHome)){
+        throw new Error(colors.red(`当前登录用户主目录不存在！`))
     }
 }
 module.exports = core
