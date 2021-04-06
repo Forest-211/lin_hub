@@ -1,16 +1,18 @@
 'use strict'
 const os = require('os')
+const path = require('path')
 const semver = require('semver')
 const rootCheck = require('root-check')
 const colors = require('colors/safe')
 const userHome = require('user-home')
 const pathExists = require('path-exists').sync
 const minimist = require('minimist')
+const dotenv = require('dotenv')
 const log = require('@lin-hub/log')
 const pkg = require('../package.json')
 const constant = require('./constant')
 
-let args
+let args, config
 function core() {
     try {
         checkPkgVersion()
@@ -18,7 +20,7 @@ function core() {
         checkRoot()
         checkUserHome()
         checkInputArgs()
-        log.verbose('debug', 'test debug log')
+        checkEnv()
     } catch (err) {
         log.error(err.message)
     }
@@ -59,13 +61,29 @@ function checkUserHome(){
 
 function checkInputArgs(){
     args = minimist(process.argv.slice(2))
-    console.log(args)
     checkArgs()
 }
 
 function checkArgs(){
     process.env.LOG_LEVEL = args.debug ? 'verbose' : 'info'
     log.level = process.env.LOG_LEVEL
+}
+
+function checkEnv(){
+    const dotenvPath = path.resolve(userHome, '.env')
+    if(pathExists(dotenvPath)){
+        config = dotenv.config({path: dotenvPath})
+    }
+    createDefaultConfig()
+    log.verbose('环境变量：', process.env.CLI_HOME_PATH)
+}
+
+function createDefaultConfig(){
+    const cliConfig = {
+        home: userHome
+    }
+    cliConfig['cliHome'] = path.join(userHome, process.env.CLI_HOME ? process.env.CLI_HOME : constant.DEFAULT_CLI_HOME)
+    process.env.CLI_HOME_PATH = cliConfig.cliHome
 }
 
 module.exports = core
