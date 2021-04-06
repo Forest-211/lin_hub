@@ -1,5 +1,7 @@
 'use strict'
+const os = require('os')
 const semver = require('semver')
+const rootCheck = require('root-check')
 const colors = require('colors/safe')
 const { info, error, notice } = require('@lin-hub/log')
 const pkg = require('../package.json')
@@ -9,6 +11,7 @@ function core() {
     try {
         checkPkgVersion()
         checkNodeVersion()
+        checkRoot()
     } catch (err) {
         error(err.message)
     }
@@ -33,4 +36,14 @@ function checkNodeVersion() {
     }
 }
 
+function checkRoot(){
+    /**
+     * 获取用户得id
+     */
+    const platform = []
+    platform.push(os.platform())
+    if(!platform.includes('win32')){
+        rootCheck()
+    }
+}
 module.exports = core
