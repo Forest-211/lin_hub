@@ -32,8 +32,10 @@
         "url": "https://github.com/Forest-architecture/lin_hub/issues"
     },
     "dependencies": {
+        "@lin-hub/log": "file:../../utils/log",
+        "colors": "^1.4.0",
         "import-local": "^3.0.2",
         "npmlog": "^4.1.2",
-        "@lin-hub/log": "file:../../utils/log"
+        "semver": "^7.3.5"
     }
 }
