@@ -5,23 +5,27 @@ const rootCheck = require('root-check')
 const colors = require('colors/safe')
 const userHome = require('user-home')
 const pathExists = require('path-exists').sync
-const { error, notice } = require('@lin-hub/log')
+const minimist = require('minimist')
+const log = require('@lin-hub/log')
 const pkg = require('../package.json')
 const constant = require('./constant')
 
+let args
 function core() {
     try {
         checkPkgVersion()
         checkNodeVersion()
         checkRoot()
         checkUserHome()
+        checkInputArgs()
+        log.verbose('debug', 'test debug log')
     } catch (err) {
-        error(err.message)
+        log.error(err.message)
     }
 }
 
 function checkPkgVersion() {
-    notice(pkg.version)
+    log.notice(pkg.version)
 }
 
 function checkNodeVersion() {
@@ -40,9 +44,6 @@ function checkNodeVersion() {
 }
 
 function checkRoot(){
-    /**
-     * 获取用户得id
-     */
     const platform = []
     platform.push(os.platform())
     if(!platform.includes('win32')){
@@ -55,4 +56,16 @@ function checkUserHome(){
         throw new Error(colors.red(`当前登录用户主目录不存在！`))
     }
 }
+
+function checkInputArgs(){
+    args = minimist(process.argv.slice(2))
+    console.log(args)
+    checkArgs()
+}
+
+function checkArgs(){
+    process.env.LOG_LEVEL = args.debug ? 'verbose' : 'info'
+    log.level = process.env.LOG_LEVEL
+}
+
 module.exports = core
