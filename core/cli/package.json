@@ -1,6 +1,6 @@
 {
     "name": "lin-hub",
-    "version": "0.0.0",
+    "version": "0.0.1",
     "description": "脚手架",
     "keywords": [
         "lin-hub",
@@ -35,8 +35,8 @@
         "url": "https://github.com/Forest-architecture/lin_hub/issues"
     },
     "dependencies": {
-        "@lin-hub/log": "file:../../utils/log",
         "@lin-hub/get-npm-info": "file:../../utils/get-npm-info",
+        "@lin-hub/log": "file:../../utils/log",
         "colors": "^1.4.0",
         "dotenv": "^8.2.0",
         "import-local": "^3.0.2",
