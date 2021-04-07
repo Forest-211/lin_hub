@@ -11,10 +11,10 @@ const dotenv = require('dotenv')
 const log = require('@lin-hub/log')
 const pkg = require('../package.json')
 const constant = require('./constant')
-const { getNpmInfo } = require('@lin-hub/get-npm-info')
+const { getNpmSemverVersion } = require('@lin-hub/get-npm-info')
 
-let args, config
-function core() {
+let args
+async function core() {
     try {
         checkPkgVersion()
         checkNodeVersion()
@@ -22,7 +22,7 @@ function core() {
         checkUserHome()
         checkInputArgs()
         checkEnv()
-        checkGlobalUpdate()
+        await checkGlobalUpdate()
     } catch (err) {
         log.error(err.message)
     }
@@ -47,48 +47,51 @@ function checkNodeVersion() {
     }
 }
 
-function checkRoot(){
+function checkRoot() {
     const platform = []
     platform.push(os.platform())
-    if(!platform.includes('win32')){
+    if (!platform.includes('win32')) {
         rootCheck()
     }
 }
 
-function checkUserHome(){
-    if(!userHome || !pathExists(userHome)){
+function checkUserHome() {
+    if (!userHome || !pathExists(userHome)) {
         throw new Error(colors.red(`当前登录用户主目录不存在！`))
     }
 }
 
-function checkInputArgs(){
+function checkInputArgs() {
     args = minimist(process.argv.slice(2))
     checkArgs()
 }
 
-function checkArgs(){
+function checkArgs() {
     process.env.LOG_LEVEL = args.debug ? 'verbose' : 'info'
     log.level = process.env.LOG_LEVEL
 }
 
-function checkEnv(){
+function checkEnv() {
     const dotenvPath = path.resolve(userHome, '.env')
-    if(pathExists(dotenvPath)){
-        config = dotenv.config({path: dotenvPath})
+    if (pathExists(dotenvPath)) {
+        config = dotenv.config({ path: dotenvPath })
     }
     createDefaultConfig()
-    log.verbose('环境变量：', process.env.CLI_HOME_PATH)
+    log.verbose('环境变量', process.env.CLI_HOME_PATH)
 }
 
-function createDefaultConfig(){
+function createDefaultConfig() {
     const cliConfig = {
-        home: userHome
+        home: userHome,
     }
-    cliConfig['cliHome'] = path.join(userHome, process.env.CLI_HOME ? process.env.CLI_HOME : constant.DEFAULT_CLI_HOME)
+    cliConfig['cliHome'] = path.join(
+        userHome,
+        process.env.CLI_HOME ? process.env.CLI_HOME : constant.DEFAULT_CLI_HOME
+    )
     process.env.CLI_HOME_PATH = cliConfig.cliHome
 }
 
-function checkGlobalUpdate(){
+async function checkGlobalUpdate() {
     /**
      * Tasking：
      * - 获取当前版本号和模块名
@@ -98,6 +101,13 @@ function checkGlobalUpdate(){
      */
     const currentVersion = pkg.version
     const npmName = pkg.name
-     getNpmInfo(npmName)
+    const lastVersion = await getNpmSemverVersion(currentVersion, npmName)
+    if (lastVersion && semver.gt(lastVersion, currentVersion)) {
+        log.warn(
+            '更新提示',
+            `请手动更新${npmName}，当前版本：${currentVersion}，最新版本：${lastVersion}
+更新命令：npm install -g ${npmName}`
+        )
+    }
 }
 module.exports = core
