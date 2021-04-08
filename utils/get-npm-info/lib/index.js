@@ -4,7 +4,6 @@ const urlJoin = require('url-join')
 const semver = require('semver')
 
 function getNpmInfo(npmName, registry) {
-    // TODO
     if (!npmName) return null
     const registryUrl = registry || getDefaultRegistry()
     const npmInfoUrl = urlJoin(registryUrl, npmName)

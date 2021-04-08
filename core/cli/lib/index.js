@@ -8,28 +8,31 @@ const userHome = require('user-home')
 const pathExists = require('path-exists').sync
 const minimist = require('minimist')
 const dotenv = require('dotenv')
+const { Command  } = require('commander')
 const log = require('@lin-hub/log')
 const pkg = require('../package.json')
 const constant = require('./constant')
 const { getNpmSemverVersion } = require('@lin-hub/get-npm-info')
 
 let args
+const program = new Command()
 async function core() {
     try {
         checkPkgVersion()
         checkNodeVersion()
         checkRoot()
         checkUserHome()
-        checkInputArgs()
+        // checkInputArgs()
         checkEnv()
         await checkGlobalUpdate()
+        regiserCommand()
     } catch (err) {
         log.error(err.message)
     }
 }
 
 function checkPkgVersion() {
-    log.notice(pkg.version)
+    // log.notice(pkg.version)
 }
 
 function checkNodeVersion() {
@@ -74,10 +77,9 @@ function checkArgs() {
 function checkEnv() {
     const dotenvPath = path.resolve(userHome, '.env')
     if (pathExists(dotenvPath)) {
-        config = dotenv.config({ path: dotenvPath })
+        dotenv.config({ path: dotenvPath })
     }
     createDefaultConfig()
-    log.verbose('环境变量', process.env.CLI_HOME_PATH)
 }
 
 function createDefaultConfig() {
@@ -96,7 +98,7 @@ async function checkGlobalUpdate() {
      * Tasking：
      * - 获取当前版本号和模块名
      * - 调用npm API 获取所有得版本号
-     * - 提取所有爸妈本号，比对那些版本号是大于当前版本号
+     * - 提取所有版本号，比对哪些版本号是大于当前版本号
      * - 获取最新版本号，提示用户更新该版本
      */
     const currentVersion = pkg.version
@@ -108,6 +110,37 @@ async function checkGlobalUpdate() {
             `请手动更新${npmName}，当前版本：${currentVersion}，最新版本：${lastVersion}
 更新命令：npm install -g ${npmName}`
         )
+    }
+}
+
+function regiserCommand(){
+    program
+        .name(Object.keys(pkg.bin)[0])
+        .usage('<command> [options]')
+        .version(pkg.version, '-v,  --version', 'output the current version')
+        .option('-d, --debug', '是否开启调试模式', false)
+
+    // 开启debug模式
+    program.on('option:debug', () => {
+        process.env.LOG_LEVEL = program.opts().debug ? 'verbose' : 'info'
+        log.level = process.env.LOG_LEVEL
+        // log.verbose('test')
+    })
+
+    // 监听未知命令
+    program.on('command:*', (obj) => {
+        const availableCommands = program.commands.map(cmd => cmd.name())
+        console.log(colors.red(`未知的命令：${obj[0]}`))
+        if(availableCommands.length) console.log(colors.red(`可用命令：${availableCommands.join(',')}`))
+    })
+
+    
+
+    program.parse(process.argv)
+    
+    if(program.args && program.args.length < 1){
+        program.outputHelp()
+        console.log()
     }
 }
 module.exports = core
