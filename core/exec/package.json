@@ -1,0 +1,33 @@
+{
+  "name": "@lin-hub/exec",
+  "version": "0.0.1",
+  "description": "@lin-hub exec",
+  "author": "changlin93 <767425412@qq.com>",
+  "homepage": "https://github.com/Forest-architecture/lin_hub#readme",
+  "license": "ISC",
+  "main": "lib/index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Forest-architecture/lin_hub.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "bugs": {
+    "url": "https://github.com/Forest-architecture/lin_hub/issues"
+  },
+  "dependencies": {
+    "@lin-hub/package": "file:../../models/package",
+    "@lin-hub/log": "file:../../utils/log"
+  }
+}

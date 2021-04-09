@@ -6,33 +6,39 @@ const rootCheck = require('root-check')
 const colors = require('colors/safe')
 const userHome = require('user-home')
 const pathExists = require('path-exists').sync
-const minimist = require('minimist')
 const dotenv = require('dotenv')
-const { Command  } = require('commander')
-const log = require('@lin-hub/log')
+const { Command } = require('commander')
 const pkg = require('../package.json')
 const constant = require('./constant')
+const log = require('@lin-hub/log')
+const init = require('@lin-hub/init')
+const exec = require('@lin-hub/exec')
 const { getNpmSemverVersion } = require('@lin-hub/get-npm-info')
 
-let args
 const program = new Command()
 async function core() {
     try {
-        checkPkgVersion()
-        checkNodeVersion()
-        checkRoot()
-        checkUserHome()
-        // checkInputArgs()
-        checkEnv()
-        await checkGlobalUpdate()
-        regiserCommand()
+        await prepare()
+        registerCommand()
     } catch (err) {
         log.error(err.message)
+        if (program.debug) {
+            console.log(err)
+        }
     }
 }
 
+async function prepare() {
+    checkPkgVersion()
+    checkNodeVersion()
+    checkRoot()
+    checkUserHome()
+    checkEnv()
+    await checkGlobalUpdate()
+}
+
 function checkPkgVersion() {
-    // log.notice(pkg.version)
+    log.info(pkg.version)
 }
 
 function checkNodeVersion() {
@@ -62,16 +68,6 @@ function checkUserHome() {
     if (!userHome || !pathExists(userHome)) {
         throw new Error(colors.red(`当前登录用户主目录不存在！`))
     }
-}
-
-function checkInputArgs() {
-    args = minimist(process.argv.slice(2))
-    checkArgs()
-}
-
-function checkArgs() {
-    process.env.LOG_LEVEL = args.debug ? 'verbose' : 'info'
-    log.level = process.env.LOG_LEVEL
 }
 
 function checkEnv() {
@@ -113,32 +109,46 @@ async function checkGlobalUpdate() {
     }
 }
 
-function regiserCommand(){
+function registerCommand() {
     program
         .name(Object.keys(pkg.bin)[0])
         .usage('<command> [options]')
         .version(pkg.version, '-v,  --version', 'output the current version')
         .option('-d, --debug', '是否开启调试模式', false)
+        .option(
+            '-tp, --targetPath <targetPath>',
+            '是否指定本地调试文件路径',
+            ''
+        )
+
+    program
+        .command('init [projectName]')
+        .option('-f, --force', '是否强制初始化项目')
+        .action(exec)
 
     // 开启debug模式
     program.on('option:debug', () => {
         process.env.LOG_LEVEL = program.opts().debug ? 'verbose' : 'info'
         log.level = process.env.LOG_LEVEL
-        // log.verbose('test')
     })
+
+    // 指定targetPath
+    program.on(
+        'option:targetPath',
+        () => (process.env.CLI_TARGET_PATH = program.opts().targetPath)
+    )
 
     // 监听未知命令
     program.on('command:*', (obj) => {
-        const availableCommands = program.commands.map(cmd => cmd.name())
+        const availableCommands = program.commands.map((cmd) => cmd.name())
         console.log(colors.red(`未知的命令：${obj[0]}`))
-        if(availableCommands.length) console.log(colors.red(`可用命令：${availableCommands.join(',')}`))
+        if (availableCommands.length)
+            console.log(colors.red(`可用命令：${availableCommands.join(',')}`))
     })
 
-    
-
     program.parse(process.argv)
-    
-    if(program.args && program.args.length < 1){
+
+    if (program.args && program.args.length < 1) {
         program.outputHelp()
         console.log()
     }
