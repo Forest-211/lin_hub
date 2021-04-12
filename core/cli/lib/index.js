@@ -11,7 +11,6 @@ const { Command } = require('commander')
 const pkg = require('../package.json')
 const constant = require('./constant')
 const log = require('@lin-hub/log')
-const init = require('@lin-hub/init')
 const exec = require('@lin-hub/exec')
 const { getNpmSemverVersion } = require('@lin-hub/get-npm-info')
 
@@ -30,7 +29,6 @@ async function core() {
 
 async function prepare() {
     checkPkgVersion()
-    checkNodeVersion()
     checkRoot()
     checkUserHome()
     checkEnv()
@@ -39,21 +37,6 @@ async function prepare() {
 
 function checkPkgVersion() {
     log.info(pkg.version)
-}
-
-function checkNodeVersion() {
-    /**
-     * Tasking
-     * - 获取当前node版本号 process.version
-     * - 比对最低版本号
-     */
-    const currentVersion = process.version
-    const lowestVersion = constant.LOWEST_NODE_VERSION
-    if (!semver.gte(currentVersion, lowestVersion)) {
-        throw new Error(
-            colors.red(`lin-hub 需要安装v${lowestVersion}以上版本的Node.js`)
-        )
-    }
 }
 
 function checkRoot() {

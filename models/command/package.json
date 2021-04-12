@@ -1,7 +1,10 @@
 {
-    "name": "@lin-hub/init",
+    "name": "@lin-hub/command",
     "version": "0.0.1",
-    "description": "lin-hub init",
+    "description": "@lin-hub/command",
+    "keywords": [
+        "command"
+    ],
     "author": "changlin93 <767425412@qq.com>",
     "homepage": "https://github.com/Forest-architecture/lin_hub#readme",
     "license": "ISC",
@@ -27,7 +30,8 @@
         "url": "https://github.com/Forest-architecture/lin_hub/issues"
     },
     "dependencies": {
-        "@lin-hub/command": "file:../../models/command",
+        "colors": "^1.4.0",
+        "semver": "^7.3.5",
         "@lin-hub/log": "file:../../utils/log"
     }
 }
