@@ -5,7 +5,7 @@ const log = require('@lin-hub/log')
 const Package = require('@lin-hub/package')
 
 const SETTINGS = {
-    init: 'vue', // @lin-hub/int
+    init: '@lin-hub/int',
 }
 
 const CACHE_DIR = 'dependencies'
@@ -81,6 +81,7 @@ async function exec() {
                     o[key] = cmd[key]
                 }
             })
+            
             args[args.length - 1] = o
             const code = `require('${rootFile}').call(null, ${JSON.stringify(
                 args

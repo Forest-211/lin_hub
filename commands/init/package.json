@@ -28,6 +28,9 @@
     },
     "dependencies": {
         "@lin-hub/command": "file:../../models/command",
-        "@lin-hub/log": "file:../../utils/log"
+        "@lin-hub/log": "file:../../utils/log",
+        "fs-extra": "^9.1.0",
+        "inquirer": "^8.0.0",
+        "semver": "^7.3.5"
     }
 }

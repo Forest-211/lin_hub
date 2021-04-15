@@ -4,6 +4,7 @@ const colors = require('colors/safe')
 const log = require('@lin-hub/log')
 
 const LOWEST_NODE_VERSION = '12.0.0'
+
 class Command {
     constructor(argv) {
         log.verbose('argv:', argv)
@@ -34,7 +35,6 @@ class Command {
     initArgs() {
         this.cmd = this._argv[this._argv.length - 1]
         this._cmd = this._argv.slice(0, this._argv.length - 1)
-        // console.log('print:', this.cmd, this._cmd)
     }
 
     checkNodeVersion() {
