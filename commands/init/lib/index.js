@@ -20,8 +20,10 @@ class InitCommand extends Command {
     async exec() {
         try {
             // 准备阶段
-            const ret = await this.prepare()
-            if (ret) {
+            const projectInfo = await this.prepare()
+            if (projectInfo) {
+                log.verbose('projectInfo:', projectInfo)
+                this.downloadTemplate()
                 // 下载模板
                 // 安装模板
             }
@@ -80,7 +82,7 @@ class InitCommand extends Command {
                 v
             )
         }
-        const projectInfo = {}
+        let projectInfo = {}
         // 1、选择创建项目或者组件
         const { type } = await inquirer.prompt({
             type: 'list',
@@ -96,7 +98,7 @@ class InitCommand extends Command {
         switch (type) {
             case TYPE_PROJECT:
                 // 2、获取项目的基本信息
-                const o = await inquirer.prompt([
+                const project = await inquirer.prompt([
                     {
                         type: 'input',
                         name: 'projectName',
@@ -146,12 +148,23 @@ class InitCommand extends Command {
                         },
                     },
                 ])
-                console.log('o:', o)
+                projectInfo = {
+                    type,
+                    ...project,
+                }
                 break
             case TYPE_COMPONENT:
                 break
         }
         return projectInfo
+    }
+
+    downloadTemplate() {
+        // 1、通过项目模板api获取项目模板信息
+        // 1.1、通过egg.js搭建一套后端系统
+        // 1.2、通过npm存储项目模板
+        // 1.3、将项目模板信息存储到MongoDB数据库中
+        // 1.4、通过egg.js获取MongoDB数据库的数据并且通过api返回
     }
 }
 
